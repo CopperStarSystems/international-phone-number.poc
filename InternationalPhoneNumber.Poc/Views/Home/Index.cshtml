@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<form>
+    <input id="phone-number" />
+
+</form>
+
+@section Scripts{
+    <script>
+        var input = document.querySelector("#phone-number");
+        var maskExpression = '';
+        var maskedInput;
+        
+        window.intlTelInput(input, {
+            // any initialisation options go here
+            utilsScript: "/lib/intl-tel-input/js/utils.js"
+        });
+
+        function applyMask() {
+            generateMaskExpression();
+
+            var maskOptions = {
+                mask: maskExpression
+            };
+
+            if (!maskedInput) {
+                maskedInput = IMask(input, maskOptions);
+            } else {
+                maskedInput.updateOptions(maskOptions);
+            }
+        }
+
+        function generateMaskExpression() {
+            var placeholder = input.getAttribute("placeholder");
+            maskExpression = placeholder.replace(/\d/g, '0');
+        }
+
+        function onCountryChanged() {
+            applyMask();
+            input.value = '';
+            maskedInput.updateValue(input.value);
+        }
+
+        function onInputKeyUp() {
+            if (!maskedInput)
+                applyMask();
+            maskedInput.updateValue(input.value);
+        }
+
+        input.addEventListener("countrychange", onCountryChanged);
+        input.addEventListener("keyup", onInputKeyUp);
+    </script>
+}
